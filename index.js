@@ -7,7 +7,7 @@ module.exports = {
   },
   init: proxy => {
     const { config: { autologin: config } } = proxy
-    console.log(`Auto-login enabled for users: ${Object.keys(config.users).join(', ')}`)
+    proxy.log(`Auto-login enabled for users: ${Object.keys(config.users).join(', ')}`)
     if (!config.trigger) throw new Error('Auto-login trigger cannot be empty or null!')
     proxy.register('serverPacket', (meta, data, client, server) => {
       if (!config.users.hasOwnProperty(client.username) || meta.name !== 'chat') return true
@@ -20,6 +20,7 @@ module.exports = {
         (config.trigger_color ? el.color === config.trigger_color : true)
       )) {
         server.write('chat', { message: '/login ' + config.users[client.username] })
+        proxy.log(`Logged in ${client.username}!`)
       }
       return true
     })
